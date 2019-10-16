@@ -12,5 +12,6 @@ routes.post('/sessions', SessionController.store);
 routes.use(authHeader);
 
 routes.post('/students', StudentController.store);
+routes.post('/students/:id', StudentController.update);
 
 export default routes;
