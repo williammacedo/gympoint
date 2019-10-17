@@ -7,8 +7,8 @@ factory.define('Student', Student, {
   name: faker.name.findName(),
   email: faker.internet.email(),
   age: faker.random.number(80),
-  weight: faker.random.number({ max: 150, precision: 2 }),
-  height: faker.random.number({ max: 2.2, precision: 2 }),
+  weight: faker.random.number({ max: 150, precision: 0.1 }),
+  height: faker.random.number({ max: 3, precision: 0.1 }),
 });
 
 export default factory;

@@ -13,7 +13,6 @@ describe('Student', () => {
       email: 'admin@gympoint.com',
       password: '123456',
     });
-
     const responseAuth = await request(app)
       .post('/sessions')
       .send({ email: 'admin@gympoint.com', password: '123456' });
@@ -44,12 +43,37 @@ describe('Student', () => {
 
   it('should create a new student', async () => {
     const student = await factory.attrs('Student');
-
     const response = await request(app)
       .post('/students')
       .auth(token, { type: 'bearer' })
       .send(student);
-
     expect(response.body).toHaveProperty('id');
+  });
+
+  it('should return Student not found.', async () => {
+    const student = await factory.create('Student');
+    const newDataStudent = await factory.attrs('Student');
+
+    const response = await request(app)
+      .post(`/students/${student.id + 1}`)
+      .auth(token, { type: 'bearer' })
+      .send(newDataStudent);
+
+    expect(response.status).toBe(400);
+    expect(response.body).toHaveProperty('error');
+    expect(response.body.error).toBe('Student not found.');
+  });
+
+  it('should update student', async () => {
+    const student = await factory.create('Student');
+    const newDataStudent = await factory.attrs('Student');
+
+    const response = await request(app)
+      .post(`/students/${student.id}`)
+      .auth(token, { type: 'bearer' })
+      .send(newDataStudent);
+
+    expect(response.body).toHaveProperty('name');
+    expect(response.body).toHaveProperty('email');
   });
 });
