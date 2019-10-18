@@ -26,13 +26,13 @@ class StudentController {
     }
 
     if (req.body.email !== student.email) {
-      const emailAlreadyInUse = Student.findOne({
+      const emailAlreadyInUse = await Student.findOne({
         where: { email: req.body.email },
       });
 
       if (emailAlreadyInUse) {
         return res.status(400).json({
-          error: `There is already a user with this email: ${emailAlreadyInUse.email}`,
+          error: `There is already a student with this email: ${emailAlreadyInUse.email}`,
         });
       }
     }

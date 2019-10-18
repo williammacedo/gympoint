@@ -41,6 +41,28 @@ describe('Student', () => {
     expect(response.body.error).toBe('Token invalid.');
   });
 
+  it('should return error, whe try create student with missing required fields', async () => {
+    const student = await factory.attrs('Student', { name: null });
+    const response = await request(app)
+      .post('/students')
+      .auth(token, { type: 'bearer' })
+      .send(student);
+    expect(response.status).toBe(400);
+    expect(response.body).toHaveProperty('error');
+    expect(response.body).toHaveProperty('messages');
+  });
+
+  it('should return error, whe try update student with missing required fields', async () => {
+    const student = await factory.attrs('Student', { name: null });
+    const response = await request(app)
+      .put('/students/1')
+      .auth(token, { type: 'bearer' })
+      .send(student);
+    expect(response.status).toBe(400);
+    expect(response.body).toHaveProperty('error');
+    expect(response.body).toHaveProperty('messages');
+  });
+
   it('should create a new student', async () => {
     const student = await factory.attrs('Student');
     const response = await request(app)
@@ -55,7 +77,7 @@ describe('Student', () => {
     const newDataStudent = await factory.attrs('Student');
 
     const response = await request(app)
-      .post(`/students/${student.id + 1}`)
+      .put(`/students/${student.id + 1}`)
       .auth(token, { type: 'bearer' })
       .send(newDataStudent);
 
@@ -64,16 +86,75 @@ describe('Student', () => {
     expect(response.body.error).toBe('Student not found.');
   });
 
-  it('should update student', async () => {
+  it('should update student with the same email', async () => {
     const student = await factory.create('Student');
     const newDataStudent = await factory.attrs('Student');
 
     const response = await request(app)
-      .post(`/students/${student.id}`)
+      .put(`/students/${student.id}`)
       .auth(token, { type: 'bearer' })
       .send(newDataStudent);
 
     expect(response.body).toHaveProperty('name');
     expect(response.body).toHaveProperty('email');
+  });
+
+  it('should update student with diferent email', async () => {
+    const student = await factory.create('StudentRuntime');
+    const newDataStudent = await factory.attrs('StudentRuntime');
+
+    const response = await request(app)
+      .put(`/students/${student.id}`)
+      .auth(token, { type: 'bearer' })
+      .send(newDataStudent);
+
+    expect(response.body).toHaveProperty('name');
+    expect(response.body).toHaveProperty('email');
+  });
+
+  it('should return There is already a student with this email: when update student', async () => {
+    const student = await factory.create('Student', {
+      email: 'student@gympoint.com',
+    });
+
+    factory.create('Student', {
+      email: 'student2@gympoint.com',
+    });
+
+    const newDataStudent = await factory.attrs('Student', {
+      email: 'student2@gympoint.com',
+    });
+
+    const response = await request(app)
+      .put(`/students/${student.id}`)
+      .auth(token, { type: 'bearer' })
+      .send(newDataStudent);
+
+    expect(response.status).toBe(400);
+    expect(response.body).toHaveProperty('error');
+    expect(response.body.error).toContain(
+      'There is already a student with this email'
+    );
+  });
+
+  it('should return There is already a student with this email: when create new student ', async () => {
+    await factory.create('StudentRuntime', {
+      email: 'student@gympoint.com',
+    });
+
+    const newDataStudent = await factory.attrs('StudentRuntime', {
+      email: 'student@gympoint.com',
+    });
+
+    const response = await request(app)
+      .post(`/students`)
+      .auth(token, { type: 'bearer' })
+      .send(newDataStudent);
+
+    expect(response.status).toBe(400);
+    expect(response.body).toHaveProperty('error');
+    expect(response.body.error).toContain(
+      'There is already a student with this email'
+    );
   });
 });

@@ -15,6 +15,6 @@ routes.post('/sessions', SessionController.store);
 routes.use(authHeader);
 
 routes.post('/students', validateStudentStore, StudentController.store);
-routes.post('/students/:id', validateStudentUpdate, StudentController.update);
+routes.put('/students/:id', validateStudentUpdate, StudentController.update);
 
 export default routes;
