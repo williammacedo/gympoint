@@ -3,11 +3,27 @@ import faker from 'faker';
 
 import Student from '../src/app/models/Student';
 import User from '../src/app/models/User';
+import Plan from '../src/app/models/Plan';
 
 factory.define('User', User, {
   name: faker.name.findName(),
   email: faker.internet.email(),
   password: faker.internet.password(10),
+});
+
+factory.define('Plan', Plan, {
+  title: faker.name.title(),
+  duration: faker.random.number(12),
+  price: faker.random.number({ max: 200, precision: 0.1 }),
+});
+
+factory.define('PlanRandom', Plan, () => {
+  const attrs = {
+    title: faker.name.title(),
+    duration: faker.random.number(12),
+    price: faker.random.number({ max: 200, precision: 0.1 }),
+  };
+  return attrs;
 });
 
 factory.define('Student', Student, {
