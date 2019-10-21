@@ -3,6 +3,7 @@ import request from 'supertest';
 import factory from '../factories';
 import app from '../../src/app';
 import User from '../../src/app/models/User';
+import truncate from '../util/truncate';
 
 describe('Student', () => {
   let token;
@@ -18,6 +19,10 @@ describe('Student', () => {
       .send({ email: 'admin@gympoint.com', password: '123456' });
 
     token = responseAuth.body.token;
+  });
+
+  beforeEach(async () => {
+    await truncate();
   });
 
   it('should return token not provided', async () => {
