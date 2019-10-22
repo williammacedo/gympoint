@@ -38,7 +38,11 @@ class PlanController {
 
   async update(req, res) {
     const { id } = req.params;
-    return res.json({ title: 'Start', duration: 3, price: 32.9 });
+    const plan = await Plan.findByPk(id);
+
+    const { title, duration, price } = await plan.update(req.body);
+
+    return res.json({ title, duration, price });
   }
 
   async delete(req, res) {

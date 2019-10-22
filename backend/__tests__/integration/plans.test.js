@@ -52,7 +52,7 @@ describe('Plans', () => {
     const planUpdate = await factory.attrs('PlanRandom');
 
     const response = await request(app)
-      .put(`/plans/:${plan.id}`)
+      .put(`/plans/${plan.id}`)
       .auth(token, { type: 'bearer' })
       .send(planUpdate);
 
